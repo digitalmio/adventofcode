@@ -1,7 +1,4 @@
-import {
-  assertEquals,
-  assertObjectMatch,
-} from "https://deno.land/std@0.208.0/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
 
 type Cubes = {
   red: number;
@@ -9,37 +6,23 @@ type Cubes = {
   blue: number;
 };
 
-const games = (data: string, config: Cubes) =>
+const games1 = (data: string, config: Cubes) =>
   data
     .split("\n")
-    .map((el) => {
-      const matchesConfig = (val: string) => {
-        const zeroConf = { red: 0, green: 0, blue: 0 } satisfies Cubes;
-        const entries = val.split(",");
-        const cubesCount = entries.reduce(
-          (cubesAcc: Cubes, cubeEl: string): Cubes => {
+    .map((line) =>
+      line
+        .split(": ")[1]
+        .split("; ")
+        .map((turn) =>
+          turn.split(", ").every((game) => {
             // @ts-ignore
-            const [count, colour]: [string, keyof Cubes] = cubeEl
-              .trim()
-              .split(" ");
-            cubesAcc[colour] = Number(count);
-            return cubesAcc;
-          },
-          zeroConf
-        );
-
-        const colours = ["red", "green", "blue"] satisfies Array<keyof Cubes>;
-        return colours.every((el) => cubesCount[el] <= config[el]);
-      };
-
-      const [gameStr, gamesData] = el.split(":");
-      const gamesArr = gamesData.split(";");
-
-      return gamesArr.every(matchesConfig)
-        ? Number(gameStr.replace("Game ", ""))
-        : null;
-    })
-    .filter(Boolean);
+            const [count, colour]: [string, keyof Cubes] = game.split(" ");
+            return config[colour] >= Number(count);
+          })
+        )
+        .every(Boolean)
+    )
+    .reduce((acc, el, i) => acc + (el ? i + 1 : 0), 0);
 
 Deno.test("Advent of code, day 2", () => {
   const testData = `Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
@@ -54,35 +37,32 @@ Deno.test("Advent of code, day 2", () => {
     blue: 14,
   };
 
-  assertEquals(games(testData, config), [1, 2, 5]);
+  assertEquals(games1(testData, config), 8);
 });
 
 const games2 = (data: string) => {
-  return data.split("\n").reduce((acc, el) => {
-    const zeroConf = { red: 0, green: 0, blue: 0 } satisfies Cubes;
-    const [gameStr, gamesData] = el.split(":");
-    const gamesArr = gamesData.split(";").flatMap((game) => game.split(","));
+  return data
+    .split("\n")
+    .map((line) => {
+      const zeroCount = { red: 0, green: 0, blue: 0 } satisfies Cubes;
 
-    const entries = gamesArr.reduce((gameCubesAcc, entry) => {
-      // @ts-ignore
-      const [count, colour]: [string, keyof Cubes] = entry.trim().split(" ");
-      gameCubesAcc[colour] =
-        gameCubesAcc[colour] > Number(count)
-          ? gameCubesAcc[colour]
-          : Number(count);
-      return gameCubesAcc;
-    }, zeroConf);
+      const rgb = line
+        .split(": ")[1]
+        .split("; ")
+        .flatMap((game) => game.split(", "))
+        .reduce((rgbAcc, game) => {
+          // @ts-ignore
+          const [count, colour]: [string, keyof Cubes] = game.split(" ");
+          if (rgbAcc[colour] < Number(count)) {
+            rgbAcc[colour] = Number(count);
+          }
+          return rgbAcc;
+        }, zeroCount);
 
-    acc[gameStr.trim().replace("Game ", "")] = entries;
-    return acc;
-  }, {} as Record<string, Cubes>);
+      return rgb.blue * rgb.green * rgb.red;
+    })
+    .reduce((acc, el) => acc + el, 0);
 };
-
-const calculateGames2Power = (data: Record<string, Cubes>) =>
-  Object.values(data).reduce((acc, el) => {
-    const power = el.red * el.blue * el.green;
-    return acc + power;
-  }, 0);
 
 Deno.test("Advent of code, day 2, v2", () => {
   const testData = `Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
@@ -91,14 +71,5 @@ Deno.test("Advent of code, day 2, v2", () => {
   Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
   Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green`;
 
-  const expected = {
-    "1": { red: 4, green: 2, blue: 6 },
-    "2": { red: 1, green: 3, blue: 4 },
-    "3": { red: 20, green: 13, blue: 6 },
-    "4": { red: 14, green: 3, blue: 15 },
-    "5": { red: 6, green: 3, blue: 2 },
-  };
-
-  assertObjectMatch(games2(testData), expected);
-  assertEquals(calculateGames2Power(games2(testData)), 2286);
+  assertEquals(games2(testData), 2286);
 });
