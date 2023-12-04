@@ -9,37 +9,37 @@ type Cubes = {
   blue: number;
 };
 
-const games = (data: string, config: Cubes) => {
-  return data.split("\n").reduce((acc, el) => {
-    const matchesConfig = (val: string) => {
-      const zeroConf = { red: 0, green: 0, blue: 0 } satisfies Cubes;
-      const entries = val.split(",");
-      const cubesCount = entries.reduce(
-        (cubesAcc: Cubes, cubeEl: string): Cubes => {
-          // @ts-ignore
-          const [count, colour]: [string, keyof Cubes] = cubeEl
-            .trim()
-            .split(" ");
-          cubesAcc[colour] = Number(count);
-          return cubesAcc;
-        },
-        zeroConf
-      );
+const games = (data: string, config: Cubes) =>
+  data
+    .split("\n")
+    .map((el) => {
+      const matchesConfig = (val: string) => {
+        const zeroConf = { red: 0, green: 0, blue: 0 } satisfies Cubes;
+        const entries = val.split(",");
+        const cubesCount = entries.reduce(
+          (cubesAcc: Cubes, cubeEl: string): Cubes => {
+            // @ts-ignore
+            const [count, colour]: [string, keyof Cubes] = cubeEl
+              .trim()
+              .split(" ");
+            cubesAcc[colour] = Number(count);
+            return cubesAcc;
+          },
+          zeroConf
+        );
 
-      const colours = ["red", "green", "blue"] satisfies Array<keyof Cubes>;
-      return colours.every((el) => cubesCount[el] <= config[el]);
-    };
+        const colours = ["red", "green", "blue"] satisfies Array<keyof Cubes>;
+        return colours.every((el) => cubesCount[el] <= config[el]);
+      };
 
-    const [gameStr, gamesData] = el.split(":");
-    const gamesArr = gamesData.split(";");
+      const [gameStr, gamesData] = el.split(":");
+      const gamesArr = gamesData.split(";");
 
-    if (gamesArr.every(matchesConfig)) {
-      acc.push(Number(gameStr.replace("Game ", "")));
-    }
-
-    return acc;
-  }, [] as number[]);
-};
+      return gamesArr.every(matchesConfig)
+        ? Number(gameStr.replace("Game ", ""))
+        : null;
+    })
+    .filter(Boolean);
 
 Deno.test("Advent of code, day 2", () => {
   const testData = `Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
@@ -74,7 +74,6 @@ const games2 = (data: string) => {
     }, zeroConf);
 
     acc[gameStr.trim().replace("Game ", "")] = entries;
-
     return acc;
   }, {} as Record<string, Cubes>);
 };
