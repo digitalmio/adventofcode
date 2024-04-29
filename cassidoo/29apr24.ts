@@ -4,7 +4,7 @@ const translateRightShift = (str: string) =>
   str
     .split("")
     .map((el) =>
-      el !== " " ? chars.at(chars.findIndex((chEl) => chEl === el) - 1) : " "
+      el === " " ? " " : chars.at(chars.findIndex((chEl) => chEl === el) - 1)
     )
     .join("");
 
