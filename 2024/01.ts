@@ -999,31 +999,37 @@ const input = `88276   66757
 76815   26086
 36438   47508`;
 
-const dataArrays = input.split('\n').map(el => el.trim()).reduce((acc, el) => {
-  const [left, right] = el.split('   ');
-  acc[0].push(Number(left));
-  acc[1].push(Number(right));
-  return acc;
-}, [[], []] as [number[], number[]])
-const dataArraysSorted = dataArrays.map((el) => el.sort((a, b) => a - b))
+const dataArrays = input
+	.split("\n")
+	.map((el) => el.trim())
+	.reduce(
+		(acc, el) => {
+			const [left, right] = el.split("   ");
+			acc[0].push(Number(left));
+			acc[1].push(Number(right));
+			return acc;
+		},
+		[[], []] as [number[], number[]],
+	);
+const dataArraysSorted = dataArrays.map((el) => el.sort((a, b) => a - b));
 
-console.log({ dataArrays })
+console.log({ dataArrays });
 
-const pairDistances = dataArraysSorted[0].map((el, i) => [el, dataArraysSorted[1][i]]).map(el => Math.max(...el) - Math.min(...el));
-const distanceSum = pairDistances.reduce((acc, el) => acc + el, 0)
+const pairDistances = dataArraysSorted[0]
+	.map((el, i) => [el, dataArraysSorted[1][i]])
+	.map((el) => Math.max(...el) - Math.min(...el));
+const distanceSum = pairDistances.reduce((acc, el) => acc + el, 0);
 
-console.log({ pairDistances, distanceSum })
-
+console.log({ pairDistances, distanceSum });
 
 // -------------------
 
 const [left, right] = dataArrays;
 const similarityArray = left.reduce((acc, el) => {
-  acc.push(el * right.filter((rEl) => rEl === el).length);
-  return acc;
-}, [] as number[])
+	acc.push(el * right.filter((rEl) => rEl === el).length);
+	return acc;
+}, [] as number[]);
 
-const similaritySum = similarityArray.reduce((acc, el) => acc + el, 0)
+const similaritySum = similarityArray.reduce((acc, el) => acc + el, 0);
 
-
-console.log({ similarityArray, similaritySum })
+console.log({ similarityArray, similaritySum });

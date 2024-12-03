@@ -999,35 +999,39 @@ const input = `44 47 50 51 53 54 53
 86 89 90 92 93
 66 67 68 71 72 75`;
 
-const dataArr = input.split('\n')
-  .map(el => el.split(' '))
-  .map(el => el.map(subEl => Number(subEl)));
+const dataArr = input
+	.split("\n")
+	.map((el) => el.split(" "))
+	.map((el) => el.map((subEl) => Number(subEl)));
 
 // main logic
 const check = (input: number[]): boolean => {
-  const temp = input.reduce((acc, el, i, arr) => {
-    if (i === 0) {
-      return acc;
-    }
-    acc.push(Math.max(el, arr[i - 1]) - Math.min(el, arr[i - 1]) < 4);
-    return acc;
+	const temp = input.reduce((acc, el, i, arr) => {
+		if (i === 0) {
+			return acc;
+		}
+		acc.push(Math.max(el, arr[i - 1]) - Math.min(el, arr[i - 1]) < 4);
+		return acc;
+	}, [] as boolean[]);
 
-  }, [] as boolean[]);
+	const higher = input.every((el, i, arr) => i === 0 || el > arr[i - 1]);
+	const lower = input.every((el, i, arr) => i === 0 || el < arr[i - 1]);
 
-  const higher = input.every((el, i, arr) => i === 0 || el > arr[i - 1]);
-  const lower = input.every((el, i, arr) => i === 0 || el < arr[i - 1]);
-
-  return temp.every(Boolean) && (lower || higher);
-}
+	return temp.every(Boolean) && (lower || higher);
+};
 
 // array versions: remove one element from array
 const newArrays = (input: number[]): number[][] => {
-  return input.map((el, i, arr) => { const newArr = [...arr]; newArr.splice(i, 1); return newArr; })
-}
+	return input.map((el, i, arr) => {
+		const newArr = [...arr];
+		newArr.splice(i, 1);
+		return newArr;
+	}); // for some reason no access to toSplied, oh well
+};
 
 // count safe
-const safe = dataArr
-  .filter((el) => [el, ...newArrays(el)].some(arr => check(arr)))
-  .length
+const safe = dataArr.filter((el) =>
+	[el, ...newArrays(el)].some((arr) => check(arr)),
+).length;
 
-console.log({ safe })
+console.log({ safe });
