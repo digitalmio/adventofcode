@@ -1033,3 +1033,5 @@ const similarityArray = left.reduce((acc, el) => {
 const similaritySum = similarityArray.reduce((acc, el) => acc + el, 0);
 
 console.log({ similarityArray, similaritySum });
+
+export {};

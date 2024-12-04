@@ -45,3 +45,5 @@ const result2 = [...input.matchAll(mulDoDontRule)]
 	);
 
 console.log({ result, result2 });
+
+export {};

@@ -1035,3 +1035,5 @@ const safe = dataArr.filter((el) =>
 ).length;
 
 console.log({ safe });
+
+export {};
