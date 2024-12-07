@@ -92,11 +92,7 @@ const check = (i: number) => {
 };
 
 console.time("v2");
-const nonLooped = possibleInputs
-	.map((el, i) => check(i))
-	.filter(Boolean).length;
+const nonLooped = possibleInputs.map((_, i) => check(i)).filter(Boolean).length;
 console.timeEnd("v2");
 
 console.log({ nonLooped });
-
-export {};

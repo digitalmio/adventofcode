@@ -8,7 +8,10 @@ const input = `mul(427,266)#mul(287,390)mul(398,319)#!$>don't()mul(613,600)from(
 // v1
 const mulRegexRule = /mul\((?<num1>\d+),(?<num2>\d+)\)/g;
 const result = [...input.matchAll(mulRegexRule)]
-	.map((el) => [parseInt(el.groups?.num1!), parseInt(el.groups?.num2!)])
+	.map((el) => [
+		Number.parseInt(el.groups?.num1!),
+		Number.parseInt(el.groups?.num2!),
+	])
 	.reduce((acc, el) => acc + el[0] * el[1], 0);
 
 // v2
@@ -19,7 +22,10 @@ const result2 = [...input.matchAll(mulDoDontRule)]
 		if (match[0].startsWith("mul")) {
 			return {
 				type: "mul",
-				data: [parseInt(match.groups?.num1!), parseInt(match.groups?.num2!)],
+				data: [
+					Number.parseInt(match.groups?.num1!),
+					Number.parseInt(match.groups?.num2!),
+				],
 			};
 		}
 		if (match[0] === "do()") {

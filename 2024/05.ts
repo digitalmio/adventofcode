@@ -30,7 +30,9 @@ const input = `47|53
 const inputGroups = input.split("\n\n").map((gr) => gr.split("\n"));
 
 const [rules, data] = inputGroups.map((groups, i) =>
-	groups.map((el) => el.split(i === 0 ? "|" : ",").map((s) => parseInt(s))),
+	groups.map((el) =>
+		el.split(i === 0 ? "|" : ",").map((s) => Number.parseInt(s)),
+	),
 );
 
 const countVal1 = (page: number[]): number => {
