@@ -39,7 +39,7 @@ while (fieldExist) {
 	const next = inputArr[nextPos[1]]?.[nextPos[0]];
 
 	if ([".", "^"].includes(next)) {
-		fields.push("" + nextPos[0] + "-" + nextPos[1]);
+		fields.push(`${nextPos[0]}-${nextPos[1]}`);
 		position = [position[0] + dir[0], position[1] + dir[1]];
 	}
 
@@ -75,7 +75,7 @@ const check = (i: number) => {
 		const next = inputArr[nextPos[1]]?.[nextPos[0]];
 
 		if ([".", "^"].includes(next)) {
-			fields.push("" + nextPos[0] + "-" + nextPos[1]);
+			fields.push(`${nextPos[0]}-${nextPos[1]}`);
 			position = [position[0] + dir[0], position[1] + dir[1]];
 		}
 
