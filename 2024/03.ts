@@ -9,8 +9,8 @@ const input = `mul(427,266)#mul(287,390)mul(398,319)#!$>don't()mul(613,600)from(
 const mulRegexRule = /mul\((?<num1>\d+),(?<num2>\d+)\)/g;
 const result = [...input.matchAll(mulRegexRule)]
 	.map((el) => [
-		Number.parseInt(el.groups?.num1!),
-		Number.parseInt(el.groups?.num2!),
+		Number.parseInt(el.groups?.num1 || "0"),
+		Number.parseInt(el.groups?.num2 || "0"),
 	])
 	.reduce((acc, el) => acc + el[0] * el[1], 0);
 
@@ -18,32 +18,42 @@ const result = [...input.matchAll(mulRegexRule)]
 const mulDoDontRule =
 	/(mul\((?<num1>\d+),(?<num2>\d+)\))|(do\(\))|(don\'t\(\))/g;
 const result2 = [...input.matchAll(mulDoDontRule)]
-	.map((match) => {
-		if (match[0].startsWith("mul")) {
-			return {
-				type: "mul",
-				data: [
-					Number.parseInt(match.groups?.num1!),
-					Number.parseInt(match.groups?.num2!),
-				],
-			};
-		}
-		if (match[0] === "do()") {
-			return { type: "do" };
-		}
-		if (match[0] === "don't()") {
-			return { type: "dont" };
-		}
-	})
+	.map(
+		(
+			match,
+		):
+			| { type: "do" }
+			| { type: "dont" }
+			| { type: "mul"; data: [number, number] }
+			| { type: "never" } => {
+			if (match[0].startsWith("mul")) {
+				return {
+					type: "mul",
+					data: [
+						Number.parseInt(match.groups?.num1 || "0"),
+						Number.parseInt(match.groups?.num2 || "0"),
+					],
+				};
+			}
+			if (match[0] === "do()") {
+				return { type: "do" };
+			}
+			if (match[0] === "don't()") {
+				return { type: "dont" };
+			}
+
+			return { type: "never" };
+		},
+	)
 	.reduce(
 		(acc, el) => {
-			if (["do", "dont"].includes(el?.type!)) {
+			if (["do", "dont"].includes(el.type)) {
 				acc[0] = el?.type as "do" | "dont";
 				return acc;
 			}
 
-			if (acc[0] === "do") {
-				acc[1] = acc[1] + el?.data?.[0]! * el?.data?.[1]!;
+			if (el.type === "mul" && acc[0] === "do") {
+				acc[1] = acc[1] + el?.data?.[0] * el?.data?.[1];
 			}
 			return acc;
 		},
