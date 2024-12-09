@@ -7,63 +7,63 @@ Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
 Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green`;
 
 type Cubes = {
-  red: number;
-  green: number;
-  blue: number;
+	red: number;
+	green: number;
+	blue: number;
 };
 
 const games1 = (data: string, config: Cubes) =>
-  data
-    .split("\n")
-    .map((line) =>
-      line
-        .split(": ")[1]
-        .split("; ")
-        .map((turn) =>
-          turn.split(", ").every((game) => {
-            // @ts-ignore
-            const [count, colour]: [string, keyof Cubes] = game.split(" ");
-            return config[colour] >= Number(count);
-          })
-        )
-        .every(Boolean)
-    )
-    .reduce((acc, el, i) => acc + (el ? i + 1 : 0), 0);
+	data
+		.split("\n")
+		.map((line) =>
+			line
+				.split(": ")[1]
+				.split("; ")
+				.map((turn) =>
+					turn.split(", ").every((game) => {
+						// @ts-ignore
+						const [count, colour]: [string, keyof Cubes] = game.split(" ");
+						return config[colour] >= Number(count);
+					}),
+				)
+				.every(Boolean),
+		)
+		.reduce((acc, el, i) => acc + (el ? i + 1 : 0), 0);
 
 Deno.test("Advent of code, day 2", () => {
-  const config = {
-    red: 12,
-    green: 13,
-    blue: 14,
-  };
+	const config = {
+		red: 12,
+		green: 13,
+		blue: 14,
+	};
 
-  assertEquals(games1(testData, config), 8);
+	assertEquals(games1(testData, config), 8);
 });
 
 const games2 = (data: string) => {
-  return data
-    .split("\n")
-    .map((line) => {
-      const zeroCount = { red: 0, green: 0, blue: 0 } satisfies Cubes;
+	return data
+		.split("\n")
+		.map((line) => {
+			const zeroCount = { red: 0, green: 0, blue: 0 } satisfies Cubes;
 
-      const rgb = line
-        .split(": ")[1]
-        .split("; ")
-        .flatMap((game) => game.split(", "))
-        .reduce((rgbAcc, game) => {
-          // @ts-ignore
-          const [count, colour]: [string, keyof Cubes] = game.split(" ");
-          if (rgbAcc[colour] < Number(count)) {
-            rgbAcc[colour] = Number(count);
-          }
-          return rgbAcc;
-        }, zeroCount);
+			const rgb = line
+				.split(": ")[1]
+				.split("; ")
+				.flatMap((game) => game.split(", "))
+				.reduce((rgbAcc, game) => {
+					// @ts-ignore
+					const [count, colour]: [string, keyof Cubes] = game.split(" ");
+					if (rgbAcc[colour] < Number(count)) {
+						rgbAcc[colour] = Number(count);
+					}
+					return rgbAcc;
+				}, zeroCount);
 
-      return rgb.blue * rgb.green * rgb.red;
-    })
-    .reduce((acc, el) => acc + el, 0);
+			return rgb.blue * rgb.green * rgb.red;
+		})
+		.reduce((acc, el) => acc + el, 0);
 };
 
 Deno.test("Advent of code, day 2, v2", () => {
-  assertEquals(games2(testData), 2286);
+	assertEquals(games2(testData), 2286);
 });
