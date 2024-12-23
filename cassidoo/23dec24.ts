@@ -17,6 +17,7 @@ const countPerfectlyRoundCookies = (n: number): number => {
 }
 
 // tests
+console.log(countPerfectlyRoundCookies(2)) // expect 0
 console.log(countPerfectlyRoundCookies(5)) // expect 1
 console.log(countPerfectlyRoundCookies(10)) // expect 2
 console.log(countPerfectlyRoundCookies(100)) // expect 24
