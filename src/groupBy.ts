@@ -30,3 +30,17 @@ const groupBy = <Book extends Record<string, any>>(
 const groupedBooks = groupBy(books, (book) => book.genre);
 
 console.log(groupedBooks);
+
+const transactions = [
+  { date: "2021-01-14", category: "Electronics", amount: 100 },
+  { date: "2021-01-22", category: "Clothing", amount: 150 },
+  { date: "2021-02-05", category: "Electronics", amount: 200 },
+  { date: "2021-02-18", category: "Clothing", amount: 120 },
+  { date: "2021-03-10", category: "Electronics", amount: 180 },
+];
+const groupedTransactions = groupBy(
+  transactions,
+  (transaction) => transaction.date.slice(0, 7),
+);
+
+console.log(groupedTransactions);
