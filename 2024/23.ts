@@ -1,3 +1,5 @@
+// https://adventofcode.com/2024/day/23
+
 const rawData = `kh-tc
 qp-kh
 de-cg
