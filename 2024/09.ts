@@ -1,40 +1,42 @@
 const input = "2333133121414131402";
 
-const getInputChecksum = (input: string) => {
-	let i = 0;
-	let numI = 0;
-	const type = ["num", "space"];
+type NumberOrDotArr = Array<number | ".">;
 
-	const getNumI = () => numI.toString().at(-1) as string;
+export const diskDefragmentation = (data: string): NumberOrDotArr => {
+  const removeTrailingDots = (data: NumberOrDotArr) => {
+    while (data.at(-1) === ".") {
+      data.pop();
+    }
+    return data;
+  };
 
-	const parsedInput = input.split("").reduce((acc, el) => {
-		const str = (filler: string) => Array(Number(el)).fill(filler).join("");
-		const currentType = type[i % type.length];
-		const next = currentType === "num" ? str(getNumI()) : str(".");
+  let pos = 0;
+  const dotDiskData = data.split("").reduce<NumberOrDotArr>((acc, el, i) => {
+    const isDot = i % 2;
+    const fill = isDot ? "." : pos;
+    pos = isDot ? pos : pos + 1;
+    return [...acc, ...Array(parseInt(el)).fill(fill)];
+  }, []);
 
-		if (currentType === "num") numI++;
-		i++;
+  const defrag = (arr: NumberOrDotArr) => {
+    const findDot = (arr: NumberOrDotArr) => arr.findIndex((el) => el === ".");
 
-		return acc + next;
-	}, "");
+    while (findDot(arr) !== -1) {
+      arr = removeTrailingDots(arr);
+      arr[findDot(arr)] = arr.pop() as number;
+    }
 
-	const optimisedInput = parsedInput.split("").reduce((acc, el, i, arr) => {
-		if (el !== ".") {
-			acc.push(el);
-			return acc;
-		}
+    return arr;
+  };
 
-		const lastNumberIndex = arr.join("").replaceAll(".", " ").trimEnd();
-		const num = acc[lastNumberIndex];
-
-		acc.push();
-	}, [] as string[]);
-
-	return {
-		parsedInput,
-	};
+  return defrag(dotDiskData);
 };
 
-console.log(getInputChecksum(input));
+console.log(
+  diskDefragmentation(input).reduce<number>(
+    (acc, el, i) => acc + (el === "." ? 0 : (el * i)),
+    0,
+  ),
+);
 
 export {};
